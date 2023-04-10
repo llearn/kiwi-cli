@@ -207,7 +207,7 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
                     if (expressionStatement) {
                         const templateExpressoin = expressionStatement.expression;
                         const { templateSpans } = templateExpressoin;
-                        if (templateSpans.length > 0) {
+                        if ((templateSpans === null || templateSpans === void 0 ? void 0 : templateSpans.length) > 0) {
                             const kvPair = templateSpans.map((span, index) => {
                                 const { pos, end } = span.expression;
                                 const str = script.slice(pos, end);

@@ -216,8 +216,8 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
           const expressionStatement:ts.ExpressionStatement = statement as ts.ExpressionStatement;
           if(expressionStatement){
            const templateExpressoin = expressionStatement.expression as ts.TemplateExpression;
-            const {templateSpans } = templateExpressoin;
-            if(templateSpans.length > 0){
+            const { templateSpans } = templateExpressoin;
+            if(templateSpans?.length > 0){
               const kvPair = templateSpans.map((span, index) => {
                 const {pos,end} = span.expression;
                 const str = script.slice(pos,end);
