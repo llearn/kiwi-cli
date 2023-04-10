@@ -184,6 +184,9 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
   const code = readFile(filePath);
   const isHtmlFile = _.endsWith(filePath, '.html');
   const isVueFile = _.endsWith(filePath, '.vue');
+  const isTsFile = _.endsWith(filePath, '.ts');
+  const isTsxFile = _.endsWith(filePath, '.tsx');
+
   let newCode = code;
   let finalReplaceText = arg.text;
   const { start, end } = arg.range;
@@ -206,7 +209,7 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
     if (last1Char === '`') {
       const script = '`'+arg.text+'`'
       const textProgram = esprima.parseScript(script, { range: true });
-
+      
       if(textProgram){
         for (const body of textProgram.body) {
           const { expression } = body;
@@ -218,8 +221,7 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
                 const str = script.slice(range[0], range[1]);
                 return `val${index + 1}: ${str}`;
               });
-              console.log(JSON.stringify(kvPair));
-              finalReplaceVal = `I18N.template(${val}, { ${kvPair.join(',\n')} })`;
+              finalReplaceVal = `I18N.template${ (isTsFile || isTsxFile)?'?.':'' }(${val}, { ${kvPair.join(',\n')} })`;
               expressions.forEach((expression, index) => {
                 const {range} = expression;
                 const str = script.slice(range[0], range[1]);
