@@ -77,13 +77,15 @@ function removeFileComment(code, fileName) {
  */
 function findTextInTs(code: string, fileName: string) {
   const matches = [];
-  const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
-
+  const isTsxFile = fileName.endsWith('.tsx');
+  const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, isTsxFile? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  
   function visit(node: ts.Node) {
     switch (node.kind) {
       case ts.SyntaxKind.StringLiteral: {
         /** 判断 Ts 中的字符串含有中文 */
         const { text } = node as ts.StringLiteral;
+        
         if (text.match(DOUBLE_BYTE_REGEX)) {
           const start = node.getStart();
           const end = node.getEnd();
@@ -104,6 +106,7 @@ function findTextInTs(code: string, fileName: string) {
             const text = child.getText();
             /** 修复注释含有中文的情况，Angular 文件错误的 Ast 情况 */
             const noCommentText = removeFileComment(text, fileName);
+
 
             if (noCommentText.match(DOUBLE_BYTE_REGEX)) {
               const start = child.getStart();

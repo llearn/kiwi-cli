@@ -160,7 +160,7 @@ async function runTranslateApi(dstLang: string, origin: string) {
         console.log(`${dstLang} 自动翻译完成`);
         // 自动导入翻译结果
         importMessages(filePath, dstLang);
-        resolve();
+        resolve(filePath);
       }
     });
   });

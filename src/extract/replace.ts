@@ -7,7 +7,6 @@ import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as prettier from 'prettier';
 import * as ts from 'typescript';
-import * as esprima from 'esprima';
 import { readFile, writeFile } from './file';
 import { getLangData } from './getLangData';
 import { getProjectConfig, getLangDir, successInfo, failInfo, highlightText } from '../utils';
@@ -190,6 +189,7 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
   let newCode = code;
   let finalReplaceText = arg.text;
   const { start, end } = arg.range;
+
   // 若是字符串，删掉两侧的引号
   if (arg.isString) {
     // 如果引号左侧是 等号，则可能是 jsx 的 props，此时要替换成 {
@@ -208,23 +208,27 @@ function replaceAndUpdate(filePath, arg, val, validateDuplicate, needWrite = tru
     // 若是模板字符串，看看其中是否包含变量
     if (last1Char === '`') {
       const script = '`'+arg.text+'`'
-      const textProgram = esprima.parseScript(script, { range: true });
-      
-      if(textProgram){
-        for (const body of textProgram.body) {
-          const { expression } = body;
-          if(expression.type == 'TemplateLiteral'){
-            const { expressions } = expression;
-            if(expressions.length > 0){
-              const kvPair = expressions.map((expression, index) => {
-                const {range} = expression;
-                const str = script.slice(range[0], range[1]);
+
+      const ast = ts.createSourceFile('', script, ts.ScriptTarget.ES2015, true, isTsxFile?ts.ScriptKind.TSX:ts.ScriptKind.TS);
+
+      if(ast){
+        for (const statement of ast.statements) {
+          const expressionStatement:ts.ExpressionStatement = statement as ts.ExpressionStatement;
+          if(expressionStatement){
+           const templateExpressoin = expressionStatement.expression as ts.TemplateExpression;
+            const {templateSpans } = templateExpressoin;
+            if(templateSpans.length > 0){
+              const kvPair = templateSpans.map((span, index) => {
+                const {pos,end} = span.expression;
+                const str = script.slice(pos,end);
                 return `val${index + 1}: ${str}`;
               });
+              
               finalReplaceVal = `I18N.template${ (isTsFile || isTsxFile)?'?.':'' }(${val}, { ${kvPair.join(',\n')} })`;
-              expressions.forEach((expression, index) => {
-                const {range} = expression;
-                const str = script.slice(range[0], range[1]);
+
+              templateSpans.forEach((span, index) => {
+                const {pos,end} = span.expression;
+                const str = script.slice(pos - 2, end + 1);
                 finalReplaceText = finalReplaceText.replace(str, `{val${index + 1}}`);
               });
             }

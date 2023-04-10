@@ -73,7 +73,8 @@ function removeFileComment(code, fileName) {
  */
 function findTextInTs(code, fileName) {
     const matches = [];
-    const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, ts.ScriptKind.TSX);
+    const isTsxFile = fileName.endsWith('.tsx');
+    const ast = ts.createSourceFile('', code, ts.ScriptTarget.ES2015, true, isTsxFile ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
     function visit(node) {
         switch (node.kind) {
             case ts.SyntaxKind.StringLiteral: {

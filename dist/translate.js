@@ -26,7 +26,7 @@ const d3_dsv_1 = require("d3-dsv");
 const utils_1 = require("./utils");
 const import_1 = require("./import");
 const mock_1 = require("./mock");
-const CONFIG = utils_1.getProjectConfig();
+const CONFIG = (0, utils_1.getProjectConfig)();
 /**
  * 百度单次翻译任务
  * @param text 待翻译文案
@@ -34,7 +34,7 @@ const CONFIG = utils_1.getProjectConfig();
  */
 function translateTextByBaidu(text, toLang) {
     const { baiduApiKey: { appId, appKey }, baiduLangMap } = CONFIG;
-    return utils_1.withTimeout(new Promise((resolve, reject) => {
+    return (0, utils_1.withTimeout)(new Promise((resolve, reject) => {
         baiduTranslate(appId, appKey, baiduLangMap[toLang], 'zh')(text)
             .then(data => {
             if (data && data.trans_result) {
@@ -67,7 +67,7 @@ function textToUpperCaseByFirstWord(text) {
 function googleTranslateTexts(untranslatedTexts, toLang) {
     return __awaiter(this, void 0, void 0, function* () {
         const translateAllTexts = Object.keys(untranslatedTexts).map(key => {
-            return utils_1.translateText(untranslatedTexts[key], toLang).then(translatedText => [key, translatedText]);
+            return (0, utils_1.translateText)(untranslatedTexts[key], toLang).then(translatedText => [key, translatedText]);
         });
         return new Promise(resolve => {
             const result = {};
@@ -144,7 +144,7 @@ exports.baiduTranslateTexts = baiduTranslateTexts;
  */
 function runTranslateApi(dstLang, origin) {
     return __awaiter(this, void 0, void 0, function* () {
-        const untranslatedTexts = mock_1.getAllUntranslatedTexts(dstLang);
+        const untranslatedTexts = (0, mock_1.getAllUntranslatedTexts)(dstLang);
         let mocks = {};
         if (origin === 'Google') {
             mocks = yield googleTranslateTexts(untranslatedTexts, dstLang);
@@ -156,10 +156,10 @@ function runTranslateApi(dstLang, origin) {
         if (messagesToTranslate.length === 0) {
             return Promise.resolve();
         }
-        const content = d3_dsv_1.tsvFormatRows(messagesToTranslate);
+        const content = (0, d3_dsv_1.tsvFormatRows)(messagesToTranslate);
         // 输出tsv文件
         return new Promise((resolve, reject) => {
-            const filePath = path.resolve(utils_1.getLangDir(dstLang), `${dstLang}_translate.tsv`);
+            const filePath = path.resolve((0, utils_1.getLangDir)(dstLang), `${dstLang}_translate.tsv`);
             fs.writeFile(filePath, content, err => {
                 if (err) {
                     reject(err);
@@ -167,8 +167,8 @@ function runTranslateApi(dstLang, origin) {
                 else {
                     console.log(`${dstLang} 自动翻译完成`);
                     // 自动导入翻译结果
-                    import_1.importMessages(filePath, dstLang);
-                    resolve();
+                    (0, import_1.importMessages)(filePath, dstLang);
+                    resolve(filePath);
                 }
             });
         });

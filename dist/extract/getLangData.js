@@ -9,7 +9,7 @@ const globby = require("globby");
 const fs = require("fs");
 const path = require("path");
 const utils_1 = require("../utils");
-const CONFIG = utils_1.getProjectConfig();
+const CONFIG = (0, utils_1.getProjectConfig)();
 const LANG_DIR = path.resolve(CONFIG.kiwiDir, CONFIG.srcLang);
 const I18N_GLOB = `${LANG_DIR}/**/*.ts`;
 /**
@@ -68,7 +68,7 @@ function getI18N() {
  */
 function getSuggestLangObj() {
     const langObj = getI18N();
-    const finalLangObj = utils_1.flatten(langObj);
+    const finalLangObj = (0, utils_1.flatten)(langObj);
     return finalLangObj;
 }
 exports.getSuggestLangObj = getSuggestLangObj;

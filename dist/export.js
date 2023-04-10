@@ -14,11 +14,11 @@ const fs = require("fs");
 const d3_dsv_1 = require("d3-dsv");
 const utils_1 = require("./utils");
 function exportMessages(file, lang) {
-    const CONFIG = utils_1.getProjectConfig();
+    const CONFIG = (0, utils_1.getProjectConfig)();
     const langs = lang ? [lang] : CONFIG.distLangs;
     langs.map(lang => {
-        const allMessages = utils_1.getAllMessages(CONFIG.srcLang);
-        const existingTranslations = utils_1.getAllMessages(lang, (message, key) => !/[\u4E00-\u9FA5]/.test(allMessages[key]) || allMessages[key] !== message);
+        const allMessages = (0, utils_1.getAllMessages)(CONFIG.srcLang);
+        const existingTranslations = (0, utils_1.getAllMessages)(lang, (message, key) => !/[\u4E00-\u9FA5]/.test(allMessages[key]) || allMessages[key] !== message);
         const messagesToTranslate = Object.keys(allMessages)
             .filter(key => !existingTranslations.hasOwnProperty(key))
             .map(key => {
@@ -30,7 +30,7 @@ function exportMessages(file, lang) {
             console.log('All the messages have been translated.');
             return;
         }
-        const content = d3_dsv_1.tsvFormatRows(messagesToTranslate);
+        const content = (0, d3_dsv_1.tsvFormatRows)(messagesToTranslate);
         const sourceFile = file || `./export-${lang}`;
         fs.writeFileSync(sourceFile, content);
         console.log(`Exported ${messagesToTranslate.length} message(s).`);

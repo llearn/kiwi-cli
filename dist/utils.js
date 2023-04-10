@@ -186,7 +186,7 @@ function translateKeyText(text, origin) {
             }
             // Pinyin
             if (origin === 'Pinyin') {
-                const result = pinyin_pro_1.pinyin(text, { toneType: 'none' });
+                const result = (0, pinyin_pro_1.pinyin)(text, { toneType: 'none' });
                 resolve(result.split('$'));
             }
         }), 3000);

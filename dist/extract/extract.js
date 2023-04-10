@@ -24,7 +24,7 @@ const getLangData_1 = require("./getLangData");
 const utils_1 = require("../utils");
 const replace_1 = require("./replace");
 const utils_2 = require("../utils");
-const CONFIG = utils_2.getProjectConfig();
+const CONFIG = (0, utils_2.getProjectConfig)();
 /**
  * 剔除 kiwiDir 下的文件
  */
@@ -41,27 +41,27 @@ function removeLangsFiles(files) {
 function findAllChineseText(dir) {
     const first = dir.split(',')[0];
     let files = [];
-    if (file_1.isDirectory(first)) {
+    if ((0, file_1.isDirectory)(first)) {
         const dirPath = path.resolve(process.cwd(), dir);
-        files = file_1.getSpecifiedFiles(dirPath, CONFIG.ignoreDir, CONFIG.ignoreFile);
+        files = (0, file_1.getSpecifiedFiles)(dirPath, CONFIG.ignoreDir, CONFIG.ignoreFile);
     }
     else {
         files = removeLangsFiles(dir.split(','));
     }
     const filterFiles = files.filter(file => {
-        return ((file_1.isFile(file) && file.endsWith('.ts')) ||
+        return (((0, file_1.isFile)(file) && file.endsWith('.ts')) ||
             file.endsWith('.tsx') ||
             file.endsWith('.vue') ||
             file.endsWith('.js') ||
             file.endsWith('.jsx'));
     });
     const allTexts = filterFiles.reduce((pre, file) => {
-        const code = file_1.readFile(file);
-        const texts = findChineseText_1.findChineseText(code, file);
+        const code = (0, file_1.readFile)(file);
+        const texts = (0, findChineseText_1.findChineseText)(code, file);
         // 调整文案顺序，保证从后面的文案往前替换，避免位置更新导致替换出错
         const sortTexts = _.sortBy(texts, obj => -obj.range.start);
         if (texts.length > 0) {
-            console.log(`${utils_1.highlightText(file)} 发现 ${utils_1.highlightText(texts.length)} 处中文文案`);
+            console.log(`${(0, utils_1.highlightText)(file)} 发现 ${(0, utils_1.highlightText)(texts.length)} 处中文文案`);
         }
         return texts.length > 0 ? pre.concat({ file, texts: sortTexts }) : pre;
     }, []);
@@ -114,12 +114,12 @@ function getSuggestion(currentFilename) {
  * @returns any[] 最终可用于替换的key值和文案
  */
 function getReplaceableStrs(currentFilename, langsPrefix, translateTexts, targetStrs) {
-    const finalLangObj = getLangData_1.getSuggestLangObj();
+    const finalLangObj = (0, getLangData_1.getSuggestLangObj)();
     const virtualMemory = {};
     const suggestion = getSuggestion(currentFilename);
     const replaceableStrs = targetStrs.reduce((prev, curr, i) => {
         const _text = curr.text;
-        let key = utils_1.findMatchKey(finalLangObj, _text);
+        let key = (0, utils_1.findMatchKey)(finalLangObj, _text);
         if (key) {
             key = key.replace(/-/g, '_');
         }
@@ -140,7 +140,7 @@ function getReplaceableStrs(currentFilename, langsPrefix, translateTexts, target
             }
             let occurTime = 1;
             // 防止出现前四位相同但是整体文案不同的情况
-            while (utils_1.findMatchValue(finalLangObj, transKey) !== _text &&
+            while ((0, utils_1.findMatchValue)(finalLangObj, transKey) !== _text &&
                 _.keys(finalLangObj).includes(`${transKey}${occurTime >= 2 ? occurTime : ''}`)) {
                 occurTime++;
             }
@@ -176,20 +176,20 @@ function extractAll({ dirPath, prefix }) {
     // 翻译源配置错误，则终止
     const origin = CONFIG.defaultTranslateKeyApi || 'Pinyin';
     if (!['Pinyin', 'Google', 'Baidu'].includes(CONFIG.defaultTranslateKeyApi)) {
-        console.log(`Kiwi 仅支持 ${utils_1.highlightText('Pinyin、Google、Baidu')}，请修改 ${utils_1.highlightText('defaultTranslateKeyApi')} 配置项`);
+        console.log(`Kiwi 仅支持 ${(0, utils_1.highlightText)('Pinyin、Google、Baidu')}，请修改 ${(0, utils_1.highlightText)('defaultTranslateKeyApi')} 配置项`);
         return;
     }
     const allTargetStrs = findAllChineseText(dir);
     if (allTargetStrs.length === 0) {
-        console.log(utils_1.highlightText('没有发现可替换的文案！'));
+        console.log((0, utils_1.highlightText)('没有发现可替换的文案！'));
         return;
     }
     // 提示翻译源
     if (CONFIG.defaultTranslateKeyApi === 'Pinyin') {
-        console.log(`当前使用 ${utils_1.highlightText('Pinyin')} 作为key值的翻译源，若想得到更好的体验，可配置 ${utils_1.highlightText('googleApiKey')} 或 ${utils_1.highlightText('baiduApiKey')}，并切换 ${utils_1.highlightText('defaultTranslateKeyApi')}`);
+        console.log(`当前使用 ${(0, utils_1.highlightText)('Pinyin')} 作为key值的翻译源，若想得到更好的体验，可配置 ${(0, utils_1.highlightText)('googleApiKey')} 或 ${(0, utils_1.highlightText)('baiduApiKey')}，并切换 ${(0, utils_1.highlightText)('defaultTranslateKeyApi')}`);
     }
     else {
-        console.log(`当前使用 ${utils_1.highlightText(CONFIG.defaultTranslateKeyApi)} 作为key值的翻译源`);
+        console.log(`当前使用 ${(0, utils_1.highlightText)(CONFIG.defaultTranslateKeyApi)} 作为key值的翻译源`);
     }
     console.log('即将截取每个中文文案的前5位翻译生成key值，并替换中...');
     // 对当前文件进行文案key生成和替换
@@ -207,7 +207,7 @@ function extractAll({ dirPath, prefix }) {
         }, []);
         const len = item.texts.length - targetStrs.length;
         if (len > 0) {
-            console.log(colors.red(`存在 ${utils_1.highlightText(len)} 处文案无法替换，请避免在模板字符串的变量中嵌套中文`));
+            console.log(colors.red(`存在 ${(0, utils_1.highlightText)(len)} 处文案无法替换，请避免在模板字符串的变量中嵌套中文`));
         }
         let translateTexts;
         if (origin !== 'Google') {
@@ -220,37 +220,37 @@ function extractAll({ dirPath, prefix }) {
                 }
                 return `${prev}${delimiter}${transOriginText}`;
             }, []);
-            translateTexts = yield utils_1.translateKeyText(translateOriginTexts, origin);
+            translateTexts = yield (0, utils_1.translateKeyText)(translateOriginTexts, origin);
         }
         else {
             // google并发性较好，且未找到有效的分隔符，故仍然逐个文案进行翻译
             const translatePromises = targetStrs.reduce((prev, curr) => {
                 const transOriginText = getTransOriginText(curr.text);
-                return prev.concat(utils_1.translateText(transOriginText, 'en_US'));
+                return prev.concat((0, utils_1.translateText)(transOriginText, 'en_US'));
             }, []);
             [...translateTexts] = yield Promise.all(translatePromises);
         }
         if (translateTexts.length === 0) {
-            utils_1.failInfo(`未得到翻译结果，${currentFilename}替换失败！`);
+            (0, utils_1.failInfo)(`未得到翻译结果，${currentFilename}替换失败！`);
             return;
         }
         const replaceableStrs = getReplaceableStrs(currentFilename, langsPrefix, translateTexts, targetStrs);
         yield replaceableStrs
             .reduce((prev, obj) => {
             return prev.then(() => {
-                return replace_1.replaceAndUpdate(currentFilename, obj.target, `I18N.${obj.key}`, false, obj.needWrite);
+                return (0, replace_1.replaceAndUpdate)(currentFilename, obj.target, `I18N.${obj.key}`, false, obj.needWrite);
             });
         }, Promise.resolve())
             .then(() => {
             // 添加 import I18N
-            if (!replace_1.hasImportI18N(currentFilename)) {
-                const code = replace_1.createImportI18N(currentFilename);
-                file_1.writeFile(currentFilename, code);
+            if (!(0, replace_1.hasImportI18N)(currentFilename)) {
+                const code = (0, replace_1.createImportI18N)(currentFilename);
+                (0, file_1.writeFile)(currentFilename, code);
             }
-            utils_1.successInfo(`${currentFilename} 替换完成，共替换 ${targetStrs.length} 处文案！`);
+            (0, utils_1.successInfo)(`${currentFilename} 替换完成，共替换 ${targetStrs.length} 处文案！`);
         })
             .catch(e => {
-            utils_1.failInfo(e.message);
+            (0, utils_1.failInfo)(e.message);
         });
     });
     allTargetStrs
@@ -260,10 +260,10 @@ function extractAll({ dirPath, prefix }) {
         });
     }, Promise.resolve())
         .then(() => {
-        utils_1.successInfo('全部替换完成！');
+        (0, utils_1.successInfo)('全部替换完成！');
     })
         .catch((e) => {
-        utils_1.failInfo(e.message);
+        (0, utils_1.failInfo)(e.message);
     });
 }
 exports.extractAll = extractAll;

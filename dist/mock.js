@@ -25,12 +25,12 @@ const fs = require("fs");
 const _ = require("lodash");
 const utils_1 = require("./utils");
 const translate_1 = require("./translate");
-const CONFIG = utils_1.getProjectConfig();
+const CONFIG = (0, utils_1.getProjectConfig)();
 /**
  * 获取中文文案
  */
 function getSourceText() {
-    const srcLangDir = utils_1.getLangDir(CONFIG.srcLang);
+    const srcLangDir = (0, utils_1.getLangDir)(CONFIG.srcLang);
     const srcFile = path.resolve(srcLangDir, 'index.ts');
     const { default: texts } = require(srcFile);
     return texts;
@@ -40,7 +40,7 @@ function getSourceText() {
  * @param dstLang
  */
 function getDistText(dstLang) {
-    const distLangDir = utils_1.getLangDir(dstLang);
+    const distLangDir = (0, utils_1.getLangDir)(dstLang);
     const distFile = path.resolve(distLangDir, 'index.ts');
     let distTexts = {};
     if (fs.existsSync(distFile)) {
@@ -57,7 +57,7 @@ function getAllUntranslatedTexts(toLang) {
     const distTexts = getDistText(toLang);
     const untranslatedTexts = {};
     /** 遍历文案 */
-    utils_1.traverse(texts, (text, path) => {
+    (0, utils_1.traverse)(texts, (text, path) => {
         const distText = _.get(distTexts, path);
         if (text === distText || !distText) {
             untranslatedTexts[path] = text;
@@ -75,10 +75,10 @@ function mockCurrentLang(dstLang, origin) {
         const untranslatedTexts = getAllUntranslatedTexts(dstLang);
         let mocks = {};
         if (origin === 'Google') {
-            mocks = yield translate_1.googleTranslateTexts(untranslatedTexts, dstLang);
+            mocks = yield (0, translate_1.googleTranslateTexts)(untranslatedTexts, dstLang);
         }
         else {
-            mocks = yield translate_1.baiduTranslateTexts(untranslatedTexts, dstLang);
+            mocks = yield (0, translate_1.baiduTranslateTexts)(untranslatedTexts, dstLang);
         }
         /** 所有任务执行完毕后，写入mock文件 */
         return writeMockFile(dstLang, mocks);
@@ -91,14 +91,14 @@ function mockCurrentLang(dstLang, origin) {
  */
 function writeMockFile(dstLang, mocks) {
     const fileContent = 'export default ' + JSON.stringify(mocks, null, 2);
-    const filePath = path.resolve(utils_1.getLangDir(dstLang), 'mock.ts');
+    const filePath = path.resolve((0, utils_1.getLangDir)(dstLang), 'mock.ts');
     return new Promise((resolve, reject) => {
         fs.writeFile(filePath, fileContent, err => {
             if (err) {
                 reject(err);
             }
             else {
-                resolve();
+                resolve(filePath);
             }
         });
     });

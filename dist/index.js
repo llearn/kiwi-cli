@@ -62,10 +62,10 @@ if (commander.init) {
         if (!result.confirm) {
             spining('初始化项目', () => __awaiter(void 0, void 0, void 0, function* () {
                 if (['js', 'ts'].includes(commander.init)) {
-                    init_1.initProject(void 0, commander.init);
+                    (0, init_1.initProject)(void 0, commander.init);
                 }
                 else if (commander.init === true) {
-                    init_1.initProject();
+                    (0, init_1.initProject)();
                 }
                 else {
                     console.log('指定初始化类型 [type] 只支持js、ts');
@@ -81,10 +81,10 @@ if (commander.init) {
             });
             spining('初始化项目', () => __awaiter(void 0, void 0, void 0, function* () {
                 if (['js', 'ts'].includes(commander.init)) {
-                    init_1.initProject(value.dir, commander.init);
+                    (0, init_1.initProject)(value.dir, commander.init);
                 }
                 else if (commander.init === true) {
-                    init_1.initProject(value.dir);
+                    (0, init_1.initProject)(value.dir);
                 }
                 else {
                     console.log('指定初始化类型 [type] 只支持js、ts');
@@ -101,64 +101,64 @@ if (commander.import) {
             return false;
         }
         else if (commander.args) {
-            import_1.importMessages(commander.import, commander.args[0]);
+            (0, import_1.importMessages)(commander.import, commander.args[0]);
         }
     });
 }
 if (commander.export) {
     spining('导出未翻译的文案', () => {
         if (commander.export === true && commander.args.length === 0) {
-            export_1.exportMessages();
+            (0, export_1.exportMessages)();
         }
         else if (commander.args) {
-            export_1.exportMessages(commander.export, commander.args[0]);
+            (0, export_1.exportMessages)(commander.export, commander.args[0]);
         }
     });
 }
 if (commander.sync) {
     spining('文案同步', () => {
-        sync_1.sync();
+        (0, sync_1.sync)();
     });
 }
 if (commander.unused) {
     spining('导出未使用的文案', () => {
-        unused_1.findUnUsed();
+        (0, unused_1.findUnUsed)();
     });
 }
 if (commander.mock) {
-    sync_1.sync(() => __awaiter(void 0, void 0, void 0, function* () {
-        const { pass, origin } = yield utils_1.getTranslateOriginType();
+    (0, sync_1.sync)(() => __awaiter(void 0, void 0, void 0, function* () {
+        const { pass, origin } = yield (0, utils_1.getTranslateOriginType)();
         if (pass) {
             const spinner = ora(`使用 ${origin} 翻译中...`).start();
-            yield mock_1.mockLangs(origin);
+            yield (0, mock_1.mockLangs)(origin);
             spinner.succeed(`使用 ${origin} 翻译成功`);
         }
     }));
 }
 if (commander.translate) {
-    sync_1.sync(() => __awaiter(void 0, void 0, void 0, function* () {
-        const { pass, origin } = yield utils_1.getTranslateOriginType();
+    (0, sync_1.sync)(() => __awaiter(void 0, void 0, void 0, function* () {
+        const { pass, origin } = yield (0, utils_1.getTranslateOriginType)();
         if (pass) {
             const spinner = ora(`使用 ${origin} 翻译中...`).start();
-            yield translate_1.translate(origin);
+            yield (0, translate_1.translate)(origin);
             spinner.succeed(`使用 ${origin} 翻译成功`);
         }
     }));
 }
 if (commander.extract) {
-    console.log(lodash_1.isString(commander.prefix));
+    console.log((0, lodash_1.isString)(commander.prefix));
     if (commander.prefix === true) {
         console.log('请指定翻译后文案 key 值的前缀 --prefix xxxx');
     }
-    else if (lodash_1.isString(commander.prefix) && !new RegExp(/^I18N(\.[-_a-zA-Z1-9$]+)+$/).test(commander.prefix)) {
+    else if ((0, lodash_1.isString)(commander.prefix) && !new RegExp(/^I18N(\.[-_a-zA-Z1-9$]+)+$/).test(commander.prefix)) {
         console.log('前缀必须以I18N开头,后续跟上字母、下滑线、破折号、$ 字符组成的变量名');
     }
     else {
         const extractAllParams = {
-            prefix: lodash_1.isString(commander.prefix) && commander.prefix,
-            dirPath: lodash_1.isString(commander.extract) && commander.extract
+            prefix: (0, lodash_1.isString)(commander.prefix) && commander.prefix,
+            dirPath: (0, lodash_1.isString)(commander.extract) && commander.extract
         };
-        extract_1.extractAll(extractAllParams);
+        (0, extract_1.extractAll)(extractAllParams);
     }
 }
 //# sourceMappingURL=index.js.map
