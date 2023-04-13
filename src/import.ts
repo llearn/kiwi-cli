@@ -24,7 +24,7 @@ function getMessagesToImport(file: string) {
       // 把文案中自带的"转换成\", 防止JSON解析报错
       value = JSON.parse(`"${value.replace(/"/g, '\\"')}"`);
     } catch (e) {
-      throw new Error(`Illegal message: ${value}`);
+      // throw new Error(`Illegal message: ${value}`);
     }
     return [key, value];
   });

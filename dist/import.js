@@ -26,7 +26,7 @@ function getMessagesToImport(file) {
             value = JSON.parse(`"${value.replace(/"/g, '\\"')}"`);
         }
         catch (e) {
-            throw new Error(`Illegal message: ${value}`);
+            // throw new Error(`Illegal message: ${value}`);
         }
         return [key, value];
     });
